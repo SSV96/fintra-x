@@ -4,7 +4,7 @@ const config = (config: Record<string, unknown>) => {
   const ENVS = ConfigValidationSchema.parse(config);
   return {
     app: {
-      appName: 'fintra-x',
+      appName: `fintra-x-${ENVS.NODE_ENV}`,
       env: ENVS.NODE_ENV,
       port: ENVS.PORT,
     },

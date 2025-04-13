@@ -10,7 +10,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       useFactory: async (configService: ConfigService) => {
         const { host, port, username, password, dbName } =
           configService.get('db.postgres');
-
+        const isLocal = configService.get('app.env') === 'local';
         return {
           type: 'postgres',
           host,
@@ -19,8 +19,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
           password,
           database: dbName,
           autoLoadEntities: true,
-          synchronize: configService.get('app.env') === 'local' ? true : false,
-          ssl: true,
+          synchronize: isLocal,
+          ssl: !isLocal,
         };
       },
     }),

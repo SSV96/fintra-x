@@ -1,23 +1,46 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateUserInput } from './graphql/inputs/create-user.input';
 import { UpdateUserInput } from './graphql/inputs/update-user.input';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './users.schema';
 import { Repository } from 'typeorm';
-
+import { RegisterUserDTO } from '../auth/dto/register.dto';
+import * as bcrypt from 'bcryptjs';
 @Injectable()
 export class UsersService {
   constructor(@InjectRepository(Users) private repository: Repository<Users>) {}
 
-  async create(createUserInput: CreateUserInput) {
-    const user = await this.repository.findOne({
+  async upsertUser(createUserInput: RegisterUserDTO) {
+    const existingUser = await this.repository.findOne({
       where: { email: createUserInput.email },
     });
-    if (user) {
-      return user;
+
+    if (existingUser) {
+      return existingUser;
     }
     const newUser = this.repository.create(createUserInput);
     return this.repository.save(newUser);
+  }
+
+  async findOneByEmail(email: string) {
+    const user = await this.repository.findOne({ where: { email } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
+  }
+
+  async resetPassword(email: string) {
+    const existingUser = this.repository.findOne({
+      where: {
+        email,
+      },
+    });
+
+    if (!existingUser) {
+      throw new NotFoundException('User not Found');
+    }
+    // WIP add sendMail with link also expiry Functionality
+    return 'Password Reset Mail Sent Successfully';
   }
 
   async findAll() {
@@ -42,6 +65,11 @@ export class UsersService {
 
     if (!user) {
       throw new NotFoundException('User not found');
+    }
+    const { password } = updateUserInput;
+
+    if (password) {
+      updateUserInput.password = await bcrypt.hash(password, 10);
     }
 
     const updated = Object.assign(user, updateUserInput);

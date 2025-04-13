@@ -32,12 +32,12 @@ async function bootstrap() {
   });
 
   const config = new DocumentBuilder()
-    .setTitle('DocNest API')
+    .setTitle('FINTRA-X API')
     .setDescription('Comprehensive API documentation for DocNest services')
     .setVersion('1.0')
     .addTag('Auth', 'Endpoints related to authentication')
     .addTag('Users', 'Operations on user data')
-    .addTag('Documents', 'Document management APIs')
+    .addTag('Payments', 'Payments management APIs')
     .addBearerAuth()
     .build();
 

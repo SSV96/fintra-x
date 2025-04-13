@@ -2,7 +2,7 @@ import { InputType, Field } from '@nestjs/graphql';
 import { AddressInput } from './address.input';
 
 @InputType()
-export class CreateUserInput {
+export class RegisterUserInput {
   @Field()
   email: string;
 
@@ -15,8 +15,8 @@ export class CreateUserInput {
   @Field({ nullable: true })
   lastName?: string;
 
-  @Field({ nullable: true })
-  phone?: string;
+  @Field()
+  phone: string;
 
   @Field(() => AddressInput, { nullable: true })
   address?: AddressInput;

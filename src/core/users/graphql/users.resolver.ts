@@ -1,6 +1,5 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { UsersService } from '../users.service';
-import { CreateUserInput } from './inputs/create-user.input';
 import { UpdateUserInput } from './inputs/update-user.input';
 import { UserType } from './types/user.type';
 
@@ -8,9 +7,9 @@ import { UserType } from './types/user.type';
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
-  @Mutation(() => UserType)
-  createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
-    return this.usersService.create(createUserInput);
+  @Mutation()
+  resetPassword(@Args('email') email: string) {
+    return this.usersService.resetPassword(email);
   }
 
   @Query(() => [UserType], { name: 'users' })
@@ -28,7 +27,7 @@ export class UsersResolver {
     return this.usersService.update(updateUserInput);
   }
 
-  @Mutation(() => UserType)
+  @Mutation(() => String)
   removeUser(@Args('id', { type: () => String }) id: string) {
     return this.usersService.remove(id);
   }
